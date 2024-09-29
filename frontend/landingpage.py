@@ -21,9 +21,14 @@ def showLandingPage():
         title="Contact",
         icon=":material/contact_page:",
     )
+    profile_page = st.Page(
+        "frontend/profilepage.py",
+        title="Profile",
+        icon=":material/account_circle:",
+    )
 
     # NAVIGATION SETUP [WITHOUT SECTIONS]
-    pg = st.navigation(pages=[home_page, about_page, contact_page])
+    pg = st.navigation(pages=[home_page, profile_page, about_page, contact_page])
 
     # NAVIGATION SETUP [WITH SECTIONS]
     # pg = st.navigation(

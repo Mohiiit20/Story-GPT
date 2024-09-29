@@ -5,6 +5,25 @@ from frontend.landingpage import showLandingPage
 
 # Streamlit UI
 
+# Initialize session state to check if splash screen has been shown
+if 'splash_shown' not in st.session_state:
+    st.session_state['splash_shown'] = False
+
+# Splash screen logic
+if not st.session_state['splash_shown']:
+    # Display splash screen with logo and app name
+    st.markdown("<h1 style='text-align: center;'>📚StoryGPT</h1>", unsafe_allow_html=True)
+    st.spinner("Loading...")
+
+    # Wait for 1 seconds
+    time.sleep(1)
+
+    # Mark splash screen as shown
+    st.session_state['splash_shown'] = True
+
+    # Force rerun to move to login page
+    st.rerun()
+
 if 'user' not in st.session_state:
     # Login form
     st.set_page_config(page_title="StoryGPT Login", page_icon="📚")
