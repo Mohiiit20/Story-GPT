@@ -38,7 +38,7 @@ def showLandingPage():
     #     }
     # )
 
-    st.sidebar.markdown("Made with ❤️ in Mumbai")
+    st.sidebar.markdown("ASD is fine")
 
     # RUN NAVIGATION
     pg.run()

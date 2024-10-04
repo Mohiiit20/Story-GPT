@@ -19,4 +19,4 @@ st.write(
     "Thank you for using Story GPT, and we hope our stories inspire and educate!"
 )
 
-st.success("Made with ❤️ in Mumbai")
+st.success("ASD is fine")
