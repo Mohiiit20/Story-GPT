@@ -11,17 +11,6 @@ if 'story_output' not in st.session_state:
 if 'generated_image' not in st.session_state:
     st.session_state.generated_image = None
 
-# Apply custom CSS for centering and styling
-st.markdown("""
-    <style>
-        .centered-title {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 # Streamlit UI Home Page
 st.title("📚 Story GPT")
 st.write("Enter a topic, and I'll generate a social story, a split version, and an image prompt for you!")
@@ -39,34 +28,26 @@ if st.button("Generate Story"):
                 st.session_state.story_output = result  # Store output in session state
                 st.success("Story generated!")
 
-                # Display the title in bold and centered
-                st.markdown(f"<div class='centered-title'>{st.session_state.user_topic}</div>", unsafe_allow_html=True)
 
-                # Display the first part of the story
-                st.write(f"{st.session_state.story_output['story_list'][0]}")
+                st.write(f"### {st.session_state.user_topic.upper()}\n1. {st.session_state.story_output['story_list'][0]}")
 
                 # Placeholder for the image (before generating)
                 image_placeholder = st.empty()
-                image_placeholder.image("frontend/assets/loading-placeholder.png", caption="Generating Image...", width=350)
+                image_placeholder.image("frontend/assets/loading-placeholder.png", caption="Generating Image...",
+                                        width=300)
 
-                # Display the second part of the story
-                st.write(f"{st.session_state.story_output['story_list'][1]}")
+                st.write(f"2. {st.session_state.story_output['story_list'][1]}")
 
-                # Generate image based on the image prompt
+
                 image_prompt = result['image_prompt']
-                generated_img = generate_image(f"{image_prompt}")
 
-                # Once image is ready, replace the placeholder and center the image
+                generated_img = generate_image(
+                    f"{image_prompt}")
+
+                # Once image is ready, replace the placeholder
                 if generated_img:
                     st.session_state.generated_image = generated_img  # Store the image in session state
-                    image_placeholder.empty()  # Clear the loading placeholder
-
-                    # Center the image by wrapping it in a <div> with inline CSS and increase the image size
-                    st.markdown(f"""
-                        <div style='text-align: center;'>
-                            <img src='data:image/png;base64,{generated_img}' width='500'/>
-                        </div>
-                    """, unsafe_allow_html=True)
+                    image_placeholder.image(generated_img, caption="Generated Image", width=300)
             else:
                 st.warning('Topic may be explicit or invalid.')
     else:
