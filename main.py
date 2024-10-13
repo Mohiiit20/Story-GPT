@@ -1,7 +1,6 @@
 import time
 import json
 import streamlit as st
-from altair import renderers
 
 from frontend.authentication import login, sign_up
 from frontend.landingpage import showLandingPage
