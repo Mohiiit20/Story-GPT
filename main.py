@@ -1,9 +1,17 @@
 import time
+import json
 import streamlit as st
+
 from frontend.authentication import login, sign_up
 from frontend.landingpage import showLandingPage
+from streamlit_lottie import st_lottie
 
 # Streamlit UI
+def load_lottiefile(filepath: str):
+    with open(filepath, "r") as f:
+        return json.load(f)
+
+lottie_splash_screen = load_lottiefile("frontend/assets/splash-screen-animation.json")
 
 # Initialize session state to check if splash screen has been shown
 if 'splash_shown' not in st.session_state:
@@ -13,10 +21,17 @@ if 'splash_shown' not in st.session_state:
 if not st.session_state['splash_shown']:
     # Display splash screen with logo and app name
     st.markdown("<h1 style='text-align: center;'>📚StoryGPT</h1>", unsafe_allow_html=True)
-    st.spinner("Loading...")
+    st_lottie(
+        lottie_splash_screen,
+        speed=2,
+        reverse=False,
+        loop=True,
+        height=370,
+        width=None
+    )
 
     # Wait for 1 seconds
-    time.sleep(1)
+    time.sleep(2)
 
     # Mark splash screen as shown
     st.session_state['splash_shown'] = True
