@@ -38,7 +38,7 @@ def showLandingPage():
     #     }
     # )
 
-    st.sidebar.markdown("ASD is fine")
+    st.sidebar.markdown("Create Stories. Inspire Imagination!")
 
     # RUN NAVIGATION
     pg.run()
