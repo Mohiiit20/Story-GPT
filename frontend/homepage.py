@@ -33,7 +33,7 @@ if st.session_state.page == "home":
                     st.session_state.generated_images = []  # Clear previous images
 
                     # Prepare the full image prompts
-                    context_description = "a young boy with short brown hair, wearing a red shirt and blue jeans, with a curious expression"
+                    context_description = "a kid with short brown hair, wearing a red shirt and blue jeans.Image generated must be realistic"
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."
                         for i in range(len(result['image_prompts']))
