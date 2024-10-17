@@ -1,8 +1,12 @@
+import random
+
 import streamlit as st
 from model import generate_content
 from generate_image import generate_image  # Import the function from the earlier step
 from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
+
+colors=['red','green','blue','black','while']
 
 # Initialize session state for user_topic, story_output, generated_image, and page if they don't exist
 if 'user_topic' not in st.session_state:
@@ -33,7 +37,7 @@ if st.session_state.page == "home":
                     st.session_state.generated_images = []  # Clear previous images
 
                     # Prepare the full image prompts
-                    context_description = "a kid with short brown hair, wearing a red shirt and blue jeans.Image generated must be realistic"
+                    context_description = f"the kid with brown hair, wearing a {random.choice(colors)} shirt and black pants.Image generated must be realistic"
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."
                         for i in range(len(result['image_prompts']))

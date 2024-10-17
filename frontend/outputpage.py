@@ -1,8 +1,9 @@
 import streamlit as st
 from PIL import Image
-from audio_generator import generate_audio
 from io import BytesIO
-from IPython.display import Audio
+
+from generate_pdf import get_pdf
+from audio_generator import generate_audio
 
 # Load a placeholder image
 placeholder_image_path = "frontend/assets/loading-placeholder.png"  # Update this path
@@ -25,8 +26,7 @@ def show_output_page():
 
         st.write("  \n  \n")
 
-
-        if st.button("Listen the story"):
+        if st.button("Listen to the story"):
             st.success("Generating audio...")
 
             # Combine the story text into one string
@@ -41,15 +41,22 @@ def show_output_page():
             else:
                 st.error("Failed to generate audio.")
 
-
         st.write("  \n  \n")
 
-        # Create 3 buttons in a single row using Streamlit columns
+        # Create 2 buttons in a single row using Streamlit columns
         col1, col2 = st.columns(2)
 
         with col1:
-            if st.button("PDF"):
-                st.success("PDF button clicked")
+            # Generate PDF and allow download
+            pdf_buffer = get_pdf(st.session_state.user_topic.upper(), st.session_state.story_output['story_list'], st.session_state.generated_images)
+
+            # Use st.download_button to allow PDF download
+            st.download_button(
+                label="Download PDF",
+                data=pdf_buffer,
+                file_name=f"{st.session_state.user_topic.upper()}.pdf",
+                mime="application/pdf"
+            )
 
         with col2:
             if st.button("Video"):

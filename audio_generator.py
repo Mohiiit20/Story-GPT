@@ -47,10 +47,10 @@ def generate_audio(text):
         "text": text,
         "model_id": "eleven_multilingual_v2",
         "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.8,
-            "style": 0.0,
-            "use_speaker_boost": True
+            "stability": 0.8,  # High stability for clear and predictable speech
+            "similarity_boost": 0.9,  # Close resemblance to the base voice
+            "style": 0.2,  # Low expressiveness to keep it neutral and calm
+            "use_speaker_boost": False  # Natural sound without too much intensity
         }
     }
 
