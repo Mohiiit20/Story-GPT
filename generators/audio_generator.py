@@ -8,7 +8,6 @@ load_dotenv()
 
 xi_api_key = os.getenv('XI_API_KEY')
 
-
 # Aria; 9BWtsMINqrJLrRacOk9x
 # Roger; CwhRBWXzGAHq8TQ4Fs17
 # Sarah; EXAVITQu4vr4xnSDxMaL
@@ -32,7 +31,6 @@ xi_api_key = os.getenv('XI_API_KEY')
 
 
 VOICE_ID = "EXAVITQu4vr4xnSDxMaL"
-
 
 # Function to generate audio from text using ElevenLabs API
 def generate_audio(text):

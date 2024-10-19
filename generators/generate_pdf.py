@@ -13,11 +13,11 @@ def get_pdf(title, sentences, image_objects):
     c = canvas.Canvas(buffer, pagesize=letter)
 
     # Set the title font and position
-    c.setFont("Helvetica-Bold", 18)
-    c.drawCentredString(300, 750, title)
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(300, 770, title)
 
     # Define the starting Y position
-    y_position = 700
+    y_position = 720
     image_height = 3 * inch  # Fixed height for images
     margin_bottom = 100      # Define bottom margin to avoid content getting cut off
 
@@ -26,7 +26,7 @@ def get_pdf(title, sentences, image_objects):
         # Add sentence
         c.setFont("Helvetica", 12)
         y_position -= 10
-        c.drawString(100, y_position, f"Sentence {i + 1}: {sentence}")
+        c.drawString(70, y_position, f"{sentence}")
 
         # Check if there's enough space for the image and move to the next page if necessary
         if y_position - image_height < margin_bottom:
@@ -49,7 +49,7 @@ def get_pdf(title, sentences, image_objects):
         # If the Y position gets too low, start a new page
         if y_position < margin_bottom:
             c.showPage()
-            y_position = 750  # Reset Y position for the new page
+            y_position = 600  # Reset Y position for the new page
 
     # Save the PDF into the BytesIO buffer
     c.save()
