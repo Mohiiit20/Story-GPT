@@ -30,8 +30,8 @@ if not st.session_state['splash_shown']:
         width=None
     )
 
-    # Wait for 1 seconds
-    time.sleep(2)
+    # Wait for 4 seconds
+    time.sleep(4)
 
     # Mark splash screen as shown
     st.session_state['splash_shown'] = True

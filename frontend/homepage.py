@@ -1,8 +1,10 @@
 import random
+import json
 
 import streamlit as st
-from model import generate_content
-from generate_image import generate_image  # Import the function from the earlier step
+from streamlit_lottie import st_lottie
+from generators.model import generate_content
+from generators.generate_image import generate_image  # Import the function from the earlier step
 from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
 
@@ -18,6 +20,17 @@ if 'generated_images' not in st.session_state:
 if 'page' not in st.session_state:
     st.session_state.page = "home"  # Add a session state for the current page
 
+# Streamlit UI
+def load_lottie(filepath: str):
+    with open(filepath, "r") as f:
+        return json.load(f)
+
+lottie_loading_screen = load_lottie("frontend/assets/loading-screen-animation.json")
+
+# Initialize session state to check if splash screen has been shown
+if 'loading_shown' not in st.session_state:
+    st.session_state['loading_shown'] = False
+
 # Streamlit UI Home Page
 if st.session_state.page == "home":
     st.title("📚 Story GPT")
@@ -29,6 +42,16 @@ if st.session_state.page == "home":
     if st.button("Generate Story"):
         if st.session_state.user_topic:
             with st.spinner("Generating story and images ..."):
+                # Splash screen logic
+                if not st.session_state['loading_shown']:
+                    st_lottie(
+                        lottie_loading_screen,
+                        speed=2,
+                        reverse=False,
+                        loop=True,
+                        height=270,
+                        width=None
+                    )
                 # Generate story content
                 result = generate_content(st.session_state.user_topic)
 
