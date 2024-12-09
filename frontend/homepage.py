@@ -1,16 +1,16 @@
 import random
 import json
-
 import streamlit as st
 from streamlit_lottie import st_lottie
 from generators.model import generate_content
 from generators.generate_image import generate_image  # Import the function from the earlier step
 from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
+from generators.translator import translate_story, INDIAN_LANGUAGES  # Import the translator and language mapping
 
-colors=['red','green','blue','black','while']
+colors = ['red', 'green', 'blue', 'black', 'white']
 
-# Initialize session state for user_topic, story_output, generated_image, and page if they don't exist
+# Initialize session state for user_topic, story_output, generated_images, page, and selected_language
 if 'user_topic' not in st.session_state:
     st.session_state.user_topic = ""
 if 'story_output' not in st.session_state:
@@ -19,8 +19,11 @@ if 'generated_images' not in st.session_state:
     st.session_state.generated_images = []  # To store generated images
 if 'page' not in st.session_state:
     st.session_state.page = "home"  # Add a session state for the current page
+if 'selected_language' not in st.session_state:
+    st.session_state.selected_language = "en"  # Default to English
 
 # Streamlit UI
+
 def load_lottie(filepath: str):
     with open(filepath, "r") as f:
         return json.load(f)
@@ -39,6 +42,13 @@ if st.session_state.page == "home":
     # User input
     st.session_state.user_topic = st.text_input("Enter a topic for the story:", st.session_state.user_topic)
 
+    # Language selection dropdown
+    st.session_state.selected_language = st.selectbox(
+        "Select a language for the story:",
+        options=["en"] + list(INDIAN_LANGUAGES.keys()),
+        format_func=lambda code: "English" if code == "en" else INDIAN_LANGUAGES[code].capitalize()
+    )
+
     if st.button("Generate Story"):
         if st.session_state.user_topic:
             with st.spinner("Generating story and images ..."):
@@ -56,11 +66,14 @@ if st.session_state.page == "home":
                 result = generate_content(st.session_state.user_topic)
 
                 if result and result['story'] != '':
+
+
+
                     st.session_state.story_output = result  # Store output in session state
                     st.session_state.generated_images = []  # Clear previous images
 
                     # Prepare the full image prompts
-                    context_description = f"the kid with brown hair, wearing a {random.choice(colors)} shirt and black pants.Image generated must be realistic"
+                    context_description = f"the kid with brown hair, wearing a {random.choice(colors)} shirt and black pants. Image generated must be realistic"
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."
                         for i in range(len(result['image_prompts']))

@@ -1,4 +1,5 @@
 import streamlit as st
+from generators.translator import translate_story
 from PIL import Image
 from generators.generate_pdf import get_pdf
 from generators.audio_generator import generate_audio
@@ -14,6 +15,7 @@ def show_output_page():
 
         # Display the story and generated images
         for i, story_part in enumerate(st.session_state.story_output['story_list']):
+            story_part=translate_story(story_part, target_language=st.session_state.selected_language)
             st.write(f"{story_part}")
 
             # Check if the image is valid (not None)

@@ -3,9 +3,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
 load_dotenv()
-
 xi_api_key = os.getenv('XI_API_KEY')
 
 # Aria; 9BWtsMINqrJLrRacOk9x
