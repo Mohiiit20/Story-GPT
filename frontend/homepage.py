@@ -8,7 +8,42 @@ from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
 from generators.translator import translate_story, INDIAN_LANGUAGES  # Import the translator and language mapping
 
-colors = ['red', 'green', 'blue', 'black', 'white']
+colors = ['red', 'green', 'blue', 'yellow', 'orange','white']
+attire_mapping = {
+    'boy': {
+        'bn': 'a traditional Bengali dhoti and kurta',
+        'gu': 'a Gujarati kediyu and dhoti',
+        'hi': 'Indian traditional kurta-pajama',
+        'kn': 'a Kannada panche with a kurta',
+        'ml': 'a Kerala kasavu mundu with a shirt',
+        'mr': 'a Marathi dhoti with a kurta',
+        'ne': 'a Nepali daura-suruwal',
+        'or': 'an Odia dhoti and kurta',
+        'pa': 'a Punjabi kurta-pajama with a turban',
+        'sd': 'a Sindhi ajrak kurta with a shalwar',
+        'ta': 'a Tamil veshti with an angavastram',
+        'te': 'a Telugu kurta with a dhoti',
+        'ur': 'a South Asian sherwani or kurta-pajama',
+        'en': None  # No cultural attire for English
+    },
+    'girl': {
+        'bn': 'a traditional Bengali sari',
+        'gu': 'a Gujarati chaniya choli',
+        'hi': 'an Indian lehenga choli',
+        'kn': 'a Kannada ilkal saree',
+        'ml': 'a Kerala kasavu saree',
+        'mr': 'a Marathi nauvari saree',
+        'ne': 'a Nepali gunyo cholo',
+        'or': 'an Odia sambalpuri saree',
+        'pa': 'a Punjabi salwar kameez',
+        'sd': 'a Sindhi ajrak dupatta with a kurta',
+        'ta': 'a Tamil half-sari',
+        'te': 'a Telugu pattu langa',
+        'ur': 'a South Asian salwar kameez',
+        'en': None  # No cultural attire for English
+    }
+}
+
 
 # Initialize session state for user_topic, story_output, generated_images, page, and selected_language
 if 'user_topic' not in st.session_state:
@@ -47,8 +82,10 @@ if st.session_state.page == "home":
         "Select a language for the story:",
         options=["en"] + list(INDIAN_LANGUAGES.keys()),
         format_func=lambda code: "English" if code == "en" else INDIAN_LANGUAGES[code].capitalize()
-    )
 
+    )
+    target_language = st.session_state.selected_language
+    cultural_attire = attire_mapping.get(target_language, 'default cultural attire')
     if st.button("Generate Story"):
         if st.session_state.user_topic:
             with st.spinner("Generating story and images ..."):
@@ -73,7 +110,17 @@ if st.session_state.page == "home":
                     st.session_state.generated_images = []  # Clear previous images
 
                     # Prepare the full image prompts
-                    context_description = f"the kid with brown hair, wearing a {random.choice(colors)} shirt and black pants. Image generated must be realistic"
+                    if target_language == 'en':
+                        context_description = (
+                            "the kid with brown hair, wearing a colorful shirt and black pants. "
+                            "Image generated must be realistic."
+                        )
+                    else:
+                        cultural_attire = attire_mapping.get(target_language, 'default cultural attire')
+                        context_description = (
+                            f"girl dressed in {cultural_attire} wearing a {random.choice(colors)} color . Image generated must be realistic."
+                        )
+                    # Generate image prompts
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."
                         for i in range(len(result['image_prompts']))
