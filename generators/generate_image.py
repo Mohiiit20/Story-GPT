@@ -10,7 +10,7 @@ hf_api_key = os.getenv('HF_API_KEY')
 
 # Hugging Face API details
 API_URL = "https://api-inference.huggingface.co/models/merve/flux-lego-lora-dreambooth"
-headers = {"Authorization": f"Bearer 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"}
+headers = {"Authorization": f"{hf_api_key}"}
 print(hf_api_key)
 
 def generate_image(prompt):
