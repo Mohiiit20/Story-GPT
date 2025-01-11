@@ -25,7 +25,7 @@ def generate_story(topic):
 
     return {
         'story': story,
-        'story_list': get_story_list(story)
+        'story_list': get_story_parts(story)
     }
 
 
@@ -59,9 +59,20 @@ def generate_content(topic):
     }
 
 
-def get_story_list(story):
+def get_story_parts(story):
     sentences = story.split('.')
     sentences = [s.strip() for s in sentences if s.strip()]
     sentences = [s + '.' for s in sentences]
-    print(sentences)
-    return sentences
+
+    # Calculate parts
+    n = len(sentences)
+    part1 = sentences[:n // 3 + (n % 3 > 0)]
+    part2 = sentences[len(part1):len(part1) + n // 3 + (n % 3 > 1)]
+    part3 = sentences[len(part1) + len(part2):]
+
+    # Combine into parts
+    parts = [part1, part2, part3]
+    parts = [' '.join(part) for part in parts]
+    print(parts)
+    print(len(parts))
+    return parts
