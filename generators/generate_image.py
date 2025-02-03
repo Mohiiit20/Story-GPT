@@ -6,12 +6,14 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
-hf_api_key = os.getenv('HF_API_KEY')
+# hf_api_key = os.getenv('HF_API_KEY')
+
+# Hugging Face API details
+hf_api_key = "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"
 
 # Hugging Face API details
 API_URL = "https://api-inference.huggingface.co/models/merve/flux-lego-lora-dreambooth"
-headers = {"Authorization": f"{hf_api_key}"}
-print(hf_api_key)
+headers = {"Authorization": f"Bearer {hf_api_key}"}  # Corrected formatting
 
 def generate_image(prompt):
     def query(payload):
