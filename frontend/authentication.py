@@ -22,7 +22,6 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
-
 # Function for user login
 def login(email, password):
     try:
