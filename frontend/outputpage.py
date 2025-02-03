@@ -38,8 +38,9 @@ def show_output_page():
                 # Combine the story text into one string
                 full_story_text = st.session_state.story_output['story']
 
+
                 # Call the generate_audio function from audio_generator.py
-                audio_stream = generate_audio(full_story_text)
+                audio_stream = generate_audio(translate_story(full_story_text,target_language=st.session_state.selected_language))
 
                 if audio_stream:
                     # Store the generated audio in session state as a BytesIO object
