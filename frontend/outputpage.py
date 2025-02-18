@@ -55,7 +55,10 @@ def show_output_page():
         if "pdf_downloaded" in st.session_state:
             st.success("PDF already generated and downloaded.")
         else:
-            pdf_buffer = get_pdf(st.session_state.user_topic.upper(), st.session_state.story_output['story_list'],
+            translated_story_list = [translate_story(part, target_language=st.session_state.selected_language) for part
+                                     in st.session_state.story_output['story_list']]
+
+            pdf_buffer = get_pdf(st.session_state.user_topic.upper(), translated_story_list,
                                  st.session_state.generated_images)
 
             # Use st.download_button to allow PDF download
