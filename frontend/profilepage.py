@@ -8,24 +8,25 @@ else:
     st.warning("You need to log in to view your profile.")
     st.stop()
 
-# Check if username exists and set title accordingly
-if 'username' in st.session_state and st.session_state['username']:
-    title = f"Hello, {st.session_state['username']}!"
-else:
-    title = ":material/account_circle: Hello, User!"
+# Extract username from email (before @)
+default_username = user_email.split('@')[0] if user_email else "User"
 
+# Use extracted username if no custom username is set
+display_name = st.session_state.get('username', default_username)
+
+# Set title
+title = f"Hello, {display_name}!"
 st.title(title)
 
 email_icon = ':material/mail:'
 st.write(f"{email_icon} Email: {user_email}")
 
 # Input for username
-username = st.text_input("Username", placeholder="Enter your username", value=st.session_state.get('username', ''))
+username = st.text_input("Username", placeholder="Enter your username", value='')
 
 # Button to save or edit username
 if st.button("Save Username"):
     if username:
-        # Save username logic (e.g., update in database)
         st.session_state['username'] = username  # Store username in session state
         st.success(f"Username '{username}' saved successfully!")
         time.sleep(1)
@@ -37,7 +38,8 @@ if st.button("Save Username"):
 if st.button("Logout"):
     # Clear user session and redirect to login page
     del st.session_state['user']
+    st.session_state.pop('username', None)  # Clear stored username
     st.session_state['logged_out'] = True
     st.success("Logged out successfully!")
     time.sleep(1)
-    st.rerun()  # This will redirect to the login page
+    st.rerun()  # Redirect to login page
