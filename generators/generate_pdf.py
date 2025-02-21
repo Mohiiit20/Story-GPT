@@ -9,62 +9,63 @@ from reportlab.pdfbase import pdfmetrics
 from io import BytesIO
 
 # Register a font that supports Marathi (Unicode)
-font_path = "frontend/assets/NotoSansDevanagari-Regular.ttf"  # Update with your font's path
+font_path = "frontend/assets/NotoSansDevanagari-Regular.ttf"  # Update if needed
 pdfmetrics.registerFont(TTFont("NotoSansDevanagari", font_path))
 
-# Function to generate a PDF and return it as a BytesIO object
+# Load the background JPG template
+background_image_path = "frontend/assets/pdf-output-template.jpg"  # Update with actual path
+bg_reader = ImageReader(background_image_path)
+
 def get_pdf(title, sentences, image_objects):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
 
-    # Set the title font to Unicode-supported font
-    c.setFont("NotoSansDevanagari", 20)
-    c.drawCentredString(300, 770, title)
-
-    y_position = 720
-    image_height = 3 * inch
-    margin_bottom = 100
-
-    # Define a style that uses the registered font
+    # Define text formatting style (center-aligned)
     styles = getSampleStyleSheet()
     unicode_style = ParagraphStyle(
         "UnicodeStyle",
         parent=styles["Normal"],
         fontName="NotoSansDevanagari",
-        fontSize=12,
-        leading=15,  # Line spacing
+        fontSize=16,  # Increased font size
+        leading=20,  # More spacing between lines
+        alignment=1,  # **Center-aligned text**
     )
 
+    first_page = True  # Flag to check if it's the first page
+
     for i, (sentence, image_object) in enumerate(zip(sentences, image_objects)):
+        # **Don't call showPage() on the first iteration to avoid blank page**
+        if not first_page:
+            c.showPage()
+        first_page = False  # Mark first page as processed
+
+        c.drawImage(bg_reader, 0, 0, width=width, height=height)  # Draw background
+
+        # Title on the first page only
+        if i == 0:
+            c.setFont("NotoSansDevanagari", 28)  # Bigger title
+            c.setFillColorRGB(0.2, 0.2, 0.2)
+            c.drawCentredString(width / 2, height - 100, title)
+
+        y_position = height - 250  # Adjusted position for better layout
+
+        # Draw the text (Centered)
         paragraph = Paragraph(sentence, unicode_style)
-        width, height = paragraph.wrap(450, y_position - margin_bottom)
+        text_width, text_height = paragraph.wrap(450, y_position)
+        paragraph.drawOn(c, (width - text_width) / 2, y_position - text_height)  # Center the paragraph
 
-        if y_position - height < margin_bottom:
-            c.showPage()
-            c.setFont("NotoSansDevanagari", 20)  # Reset font on new page
-            y_position = 750
+        y_position -= text_height + 60  # More spacing between text and image
 
-        y_position -= 10
-        paragraph.drawOn(c, 70, y_position - height)
-        y_position -= height + 20
-
-        if y_position - image_height < margin_bottom:
-            c.showPage()
-            c.setFont("NotoSansDevanagari", 20)  # Reset font on new page
-            y_position = 750
-
+        # Draw the image, now **bigger**
         if image_object:
             pil_image = ImageReader(image_object)
-            c.drawImage(pil_image, 100, y_position - image_height, width=4 * inch, height=image_height)
+            img_width = 5 * inch  # Increased width
+            img_height = 4 * inch  # Increased height
+            c.drawImage(pil_image, (width - img_width) / 2, y_position - img_height, width=img_width, height=img_height)
         else:
-            c.drawString(100, y_position, "[Image Not Available]")
-
-        y_position -= image_height + 20
-
-        if y_position < margin_bottom:
-            c.showPage()
-            c.setFont("NotoSansDevanagari", 20)  # Reset font on new page
-            y_position = 750
+            c.setFont("Helvetica", 12)
+            c.drawCentredString(width / 2, y_position - 20, "[Image Not Available]")
 
     c.save()
     buffer.seek(0)
