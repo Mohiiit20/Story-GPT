@@ -7,7 +7,6 @@ def show_quiz_page(questions):
     # Define MCQs (placeholder questions)
 
 
-
     # Store user answers in session state
     if "quiz_answers" not in st.session_state:
         st.session_state.quiz_answers = {}
