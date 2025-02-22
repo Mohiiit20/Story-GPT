@@ -8,7 +8,6 @@ import os
 load_dotenv()
 hf_api_key = os.getenv('HF_API_KEY')
 
-# Hugging Face API details
 
 # Hugging Face API details
 API_URL = "https://api-inference.huggingface.co/models/merve/flux-lego-lora-dreambooth"
