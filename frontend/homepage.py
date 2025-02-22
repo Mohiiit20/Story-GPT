@@ -127,12 +127,13 @@ if st.session_state.page == "home":
                     ]
 
                     # Function to generate images in parallel
-                    def generate_image_concurrently(prompt):
-                        return generate_image(prompt)
+                    def generate_image_concurrently(prompt,index):
+                       save_path = f"generated_images/image_{index}.png"
+                       return generate_image(prompt, save_path)
 
                     # Use ThreadPoolExecutor to generate images concurrently
                     with ThreadPoolExecutor() as executor:
-                        generated_images = list(executor.map(generate_image_concurrently, image_prompts))
+                        generated_images = list(executor.map(generate_image_concurrently, image_prompts, range(len(image_prompts))))
 
                     # Store the generated images in session state
                     for image in generated_images:
