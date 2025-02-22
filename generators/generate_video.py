@@ -1,56 +1,76 @@
-from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
-from generators.generate_image import generate_image
+from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip
+import os
 from generators.audio_generator import generate_audio
-import tempfile
 
-def split_story(story, max_words=30):
-    words = story.split()
-    return [" ".join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+def get_story_parts(story):
+    sentences = story.split('.')
+    sentences = [s.strip() for s in sentences if s.strip()]
+    sentences = [s + '.' for s in sentences]
 
-def generate_video_from_story(story, output_path="final_story_video.mp4"):
-    story_segments = split_story(story)
+    n = len(sentences)
+    part1 = sentences[:n // 3 + (n % 3 > 0)]
+    part2 = sentences[len(part1):len(part1) + n // 3 + (n % 3 > 1)]
+    part3 = sentences[len(part1) + len(part2):]
+
+    parts = [part1, part2, part3]
+    parts = [' '.join(part) for part in parts]
+    return parts
+
+def generate_video_from_story(full_story_text, final_video_path):
+    story_segments = get_story_parts(full_story_text)
     video_clips = []
 
-    for idx, segment in enumerate(story_segments):
-        # Generate image
-        image = generate_image(segment)
-        if image is None:
-            print(f"Image generation failed for segment {idx+1}. Skipping...")
-            continue
+    # directory for storing generated assets
+    output_dir = "generated_images"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-        # Save the generated image temporarily
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as img_file:
-            image.save(img_file.name)
-            image_path = img_file.name
+    # using pre-generated images and generate audio for each segment
+    for idx, segment in enumerate(story_segments):
+        image_filename = os.path.join(output_dir, f"image_{idx}.png")
+        if not os.path.exists(image_filename):
+            print(f"Image not found: {image_filename}. Please generate images first.")
+            return
 
         # Generate audio
         audio_stream = generate_audio(segment)
-        if audio_stream is None:
-            print(f"Audio generation failed for segment {idx+1}. Skipping...")
-            continue
+        audio_filename = os.path.join(output_dir, f"audio_{idx + 1}.mp3")
+        with open(audio_filename, "wb") as f:
+            f.write(audio_stream.read())
 
-        # Save audio temporarily
-        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as audio_file:
-            audio_file.write(audio_stream.read())
-            audio_file_path = audio_file.name
+        # Create a video clip with the pre-generated image and new audio
+        audio_clip = AudioFileClip(audio_filename)
+        image_clip = ImageClip(image_filename).set_duration(audio_clip.duration)
+        video_clip = image_clip.set_audio(audio_clip)
 
-        # Create video clip
-        audio_clip = AudioFileClip(audio_file_path)
-        image_clip = ImageClip(image_path).set_duration(audio_clip.duration).set_fps(24)
-        image_clip = image_clip.set_audio(audio_clip)
+        video_clips.append(video_clip)
 
-        video_clips.append(image_clip)
-
-    if not video_clips:
-        print("No video clips were generated.")
-        return
-
-    # Concatenate all clips
+    # Combine all clips into one final video
     final_video = concatenate_videoclips(video_clips, method="compose")
-    final_video.write_videofile(output_path, fps=24)
-    print(f"Video successfully saved to {output_path}")
 
-# Example usage
+    # Save the final video
+    final_video.write_videofile(final_video_path, fps=24)
+    print(f"Video successfully saved at: {final_video_path}")
+    return final_video_path
+
+# Function to clear old images from the output directory
+def clear_old_images(output_dir):
+    if os.path.exists(output_dir):
+        for filename in os.listdir(output_dir):
+            if filename.endswith(".png"):  # Only clear image files
+                file_path = os.path.join(output_dir, filename)
+                os.remove(file_path)
+        print("Old images cleared.")
+    else:
+        os.makedirs(output_dir)
+        print(f"Created output directory: {output_dir}")
+
+# Example usage for dynamic input
 if __name__ == "__main__":
-    story_text = input("Enter your story prompt: ")
-    generate_video_from_story(story_text)
+    full_story_text = input("Enter your full story: ")
+    if full_story_text:
+        output_video_path = "video_assets/final_story_video.mp4"
+        generate_video_from_story(full_story_text, final_video_path=output_video_path)
+    else:
+        print("No story was provided. Exiting.")
+
