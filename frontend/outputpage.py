@@ -4,9 +4,11 @@ from PIL import Image
 from generators.generate_pdf import get_pdf
 from generators.audio_generator import generate_audio
 from frontend.quizpage import show_quiz_page
+from generators.generate_video import generate_video_from_story  # Import your video generator
+import tempfile
 
 # Load a placeholder image
-placeholder_image_path = "frontend/assets/loading-placeholder.png"  # Update this path
+placeholder_image_path = "frontend/assets/loading-placeholder.png"
 placeholder_image = Image.open(placeholder_image_path)
 
 # Function to display the output page
@@ -64,25 +66,36 @@ def show_output_page():
 
         st.write("  \n  \n")
 
-        # Video button handling
-        if "video_clicked" in st.session_state:
-            st.success("Video has been processed or is being processed.")
+        # 🎬 **Generate and Display Video**
+        if "video_path" in st.session_state:
+            st.success("Here is your video:")
+            st.video(st.session_state.video_path)
         else:
-            if st.button("Video"):
-                st.success("Video button clicked!")
-                st.session_state.video_clicked = True
+            if st.button("Generate Video"):
+                st.success("Generating video, please wait...")
+                full_story_text = st.session_state.story_output['story']
+
+                # Save video temporarily
+                with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_video_file:
+                    output_video_path = temp_video_file.name
+
+                generate_video_from_story(full_story_text, output_video_path)
+                st.session_state.video_path = output_video_path
+
+                st.success("Video generated successfully!")
+                st.video(st.session_state.video_path)
 
         st.write("  \n  \n")
 
         # **New Quiz Button**
         if st.button("Quiz"):
-            st.session_state.current_page = "quiz"  # Switch to quiz page
+            st.session_state.current_page = "quiz"
             st.rerun()
 
         # **Back to Home Button**
         if st.button("Back to Home"):
             st.session_state.pop('audio_stream', None)
             st.session_state.pop('pdf_downloaded', None)
-            st.session_state.pop('video_clicked', None)
+            st.session_state.pop('video_path', None)
             st.session_state.page = "home"
             st.rerun()
