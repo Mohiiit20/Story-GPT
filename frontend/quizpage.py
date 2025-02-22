@@ -1,27 +1,12 @@
 import streamlit as st
 
-def show_quiz_page():
+def show_quiz_page(questions):
     st.title("Quiz Page")
     st.write("Answer the following questions:")
 
     # Define MCQs (placeholder questions)
-    questions = [
-        {
-            "question": "What is the capital of France?",
-            "options": ["Berlin", "Madrid", "Paris", "Rome"],
-            "correct": "Paris"
-        },
-        {
-            "question": "Which planet is known as the Red Planet?",
-            "options": ["Earth", "Mars", "Jupiter", "Saturn"],
-            "correct": "Mars"
-        },
-        {
-            "question": "What is 5 + 7?",
-            "options": ["10", "11", "12", "13"],
-            "correct": "12"
-        }
-    ]
+
+
 
     # Store user answers in session state
     if "quiz_answers" not in st.session_state:

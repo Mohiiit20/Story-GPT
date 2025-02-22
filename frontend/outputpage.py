@@ -5,6 +5,7 @@ from generators.generate_pdf import get_pdf
 from generators.audio_generator import generate_audio
 from frontend.quizpage import show_quiz_page
 
+
 # Load a placeholder image
 placeholder_image_path = "frontend/assets/loading-placeholder.png"  # Update this path
 placeholder_image = Image.open(placeholder_image_path)
@@ -12,11 +13,12 @@ placeholder_image = Image.open(placeholder_image_path)
 # Function to display the output page
 def show_output_page():
     if st.session_state.get("current_page") == "quiz":
-        show_quiz_page()
+        show_quiz_page(st.session_state.story_output['quiz'])
         return  # Exit the function early
 
     if st.session_state.story_output and st.session_state.generated_images:
         st.title(f"{st.session_state.user_topic.upper()}")
+
 
         # Display the story and generated images
         for i, story_part in enumerate(st.session_state.story_output['story_list']):

@@ -16,6 +16,7 @@ print(hf_api_key)
 def generate_image(prompt):
     def query(payload):
         try:
+            print('----------------------------------------------------------------------\n')
             print(f"Sending payload: {payload}")  # Print the payload being sent
             response = requests.post(API_URL, headers=headers, json=payload)
             print(f"Response status code: {response.status_code}")  # Print status code
