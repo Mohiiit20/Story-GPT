@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-xi_api_key = os.getenv('XI_API_KEY')
+xi_api_key = 'sk_dba3231847716aed351e8f3bbad1ab26c665804244feb90b'
 
 # Aria; 9BWtsMINqrJLrRacOk9x
 # Roger; CwhRBWXzGAHq8TQ4Fs17

@@ -9,8 +9,19 @@ load_dotenv()
 hf_api_key = os.getenv('HF_API_KEY')
 
 # Hugging Face API details
-API_URL = "https://api-inference.huggingface.co/models/merve/flux-lego-lora-dreambooth"
+# API_URL = "https://api-inference.huggingface.co/models/merve/flux-lego-lora-dreambooth"
+
+# Hugging Face API details
+# API_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev" #240s timer
+# API_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell"
+# API_URL = "https://api-inference.huggingface.co/models/xey/sldr_flux_nsfw_v2-studio"
+# API_URL = "https://router.huggingface.co/hf-inference/models/cagliostrolab/animagine-xl-4.0"
+API_URL = "https://router.huggingface.co/hf-inference/models/strangerzonehf/Flux-Midjourney-Mix2-LoRA"
+# API_URL = "https://api-inference.huggingface.co/models/xgemstarx/trained-flux-dev-dreambooth-lora_jm100_15k_prodigy_augment"
+
+
 headers = {"Authorization": f"Bearer {hf_api_key}"}
+
 
 # Image generation function
 def generate_image(prompt, save_path=None):

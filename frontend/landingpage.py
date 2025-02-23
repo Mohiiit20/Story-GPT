@@ -5,6 +5,11 @@ def showLandingPage():
     st.set_page_config(page_title="StoryGPT", page_icon="📚")
 
     # PAGE SETUP
+    customized_story_gen_page = st.Page(
+        "frontend/custom.py",
+        title="custom",
+        icon=":material/home:",
+    )
     home_page = st.Page(
         "frontend/homepage.py",
         title="Home",
@@ -28,7 +33,7 @@ def showLandingPage():
     )
 
     # NAVIGATION SETUP [WITHOUT SECTIONS]
-    pg = st.navigation(pages=[home_page, profile_page, about_page, contact_page])
+    pg = st.navigation(pages=[customized_story_gen_page,home_page, profile_page, about_page, contact_page])
 
     # NAVIGATION SETUP [WITH SECTIONS]
     # pg = st.navigation(
