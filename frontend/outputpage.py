@@ -6,6 +6,7 @@ from generators.audio_generator import generate_audio
 from frontend.quizpage import show_quiz_page
 from generators.generate_video import generate_video_from_story  # Import your video generator
 import tempfile
+from frontend.session_utils import clear_user_input
 
 # Load a placeholder image
 placeholder_image_path = "frontend/assets/loading-placeholder.png"
@@ -13,6 +14,10 @@ placeholder_image = Image.open(placeholder_image_path)
 
 # Function to display the output page
 def show_output_page():
+    # Identify the source page
+    if "previous_page" not in st.session_state:
+        st.session_state.previous_page = "home"  # Default to home if not set
+
     if st.session_state.get("current_page") == "quiz":
         show_quiz_page(st.session_state.story_output['quiz'])
         return  # Exit the function early
@@ -97,10 +102,12 @@ def show_output_page():
             st.session_state.current_page = "quiz"
             st.rerun()
 
-        # **Back to Home Button**
-        if st.button("Back to Home"):
+        # **Back Button Redirects to Source Page**
+        if st.button("Back"):
+            destination = st.session_state.previous_page  # Redirect to previous page
             st.session_state.pop('audio_stream', None)
             st.session_state.pop('pdf_downloaded', None)
             st.session_state.pop('video_path', None)
-            st.session_state.page = "home"
+            st.session_state.page = destination
+            clear_user_input()
             st.rerun()

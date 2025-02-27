@@ -7,8 +7,9 @@ from concurrent.futures import ThreadPoolExecutor
 from streamlit_lottie import st_lottie
 from generators.model import generate_content
 from generators.generate_image import generate_image
-from frontend.outputcustom import show_output_page_custom
+from frontend.outputpage import show_output_page
 from generators.translator import INDIAN_LANGUAGES
+from frontend.session_utils import clear_user_input
 
 def show_custom_page():
     """Handles the custom story generation page with input options and navigation."""
@@ -28,6 +29,16 @@ def show_custom_page():
         st.session_state.selected_language = "en"
     if "loading_shown" not in st.session_state:
         st.session_state.loading_shown = False
+
+    def load_lottie(filepath: str):
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    lottie_loading_screen = load_lottie("frontend/assets/loading-screen-animation.json")
+
+    # Initialize session state to check if splash screen has been shown
+    if 'loading_shown' not in st.session_state:
+        st.session_state['loading_shown'] = False
 
     # Custom Page UI
     st.title("👑 Custom Story Generation")
@@ -61,6 +72,18 @@ def show_custom_page():
     if st.button("Generate Story"):
         if st.session_state.user_input and st.session_state.user_topic:
             with st.spinner("Generating story and images ..."):
+
+                # Splash screen logic
+                if not st.session_state['loading_shown']:
+                    st_lottie(
+                        lottie_loading_screen,
+                        speed=2,
+                        reverse=False,
+                        loop=True,
+                        height=270,
+                        width=None
+                    )
+
                 # Generate story content
                 result = generate_content(st.session_state.user_input)
                 if result and result['story']:
@@ -91,18 +114,20 @@ def show_custom_page():
                     st.session_state.generated_images.extend(generated_images)
 
                     # Navigate to output page
-                    st.session_state.page = "outputcustom"
+                    st.session_state.page = "output"
+                    st.session_state.previous_page = "custom"
                     st.rerun()
                 else:
                     st.warning("Invalid input or topic.")
         else:
             st.warning("Please provide input text and a topic.")
 
-    # If the page is set to 'outputcustom', call the output function
-    if st.session_state.page == "outputcustom":
-        show_output_page_custom()
+    # If the page is set to 'output', call the output function
+    if st.session_state.page == "output":
+        show_output_page()
 
     # Back to Home button
     if st.button("Back to Home"):
         st.session_state.page = "home"
+        clear_user_input()
         st.rerun()
