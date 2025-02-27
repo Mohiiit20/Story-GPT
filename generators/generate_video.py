@@ -3,6 +3,8 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import os
 from generators.audio_generator import generate_audio
+
+
 def get_story_parts(story):
     sentences = story.split('.')
     sentences = [s.strip() for s in sentences if s.strip()]
@@ -16,6 +18,7 @@ def get_story_parts(story):
     parts = [part1, part2, part3]
     parts = [' '.join(part) for part in parts]
     return parts
+
 def add_subtitle_to_image(image_path, subtitle, output_path):
     """Adds subtitles to an image with proper word wrapping."""
     img = Image.open(image_path).convert("RGBA")
@@ -55,7 +58,6 @@ def add_subtitle_to_image(image_path, subtitle, output_path):
     # Save new image with subtitles
     img.save(output_path)
 
-
 def generate_video_from_story(full_story_text, final_video_path):
     story_segments = get_story_parts(full_story_text)
     video_clips = []
@@ -77,6 +79,10 @@ def generate_video_from_story(full_story_text, final_video_path):
 
         # Generate audio
         audio_stream = generate_audio(segment)
+        if audio_stream is None:
+            print(f"❌ Video cannot be generated as audio is unavailable for segment {idx + 1}.")
+            return None  # Stop execution immediately
+
         audio_filename = os.path.join(output_dir, f"audio_{idx + 1}.mp3")
         with open(audio_filename, "wb") as f:
             f.write(audio_stream.read())
@@ -93,8 +99,6 @@ def generate_video_from_story(full_story_text, final_video_path):
     final_video.write_videofile(final_video_path, fps=24)
     print(f"Video successfully saved at: {final_video_path}")
     return final_video_path
-
-
 
 # Function to clear old images from the output directory
 def clear_old_images(output_dir):
@@ -116,4 +120,3 @@ if __name__ == "__main__":
         generate_video_from_story(full_story_text, final_video_path=output_video_path)
     else:
         print("No story was provided. Exiting.")
-

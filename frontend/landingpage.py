@@ -26,22 +26,9 @@ def showLandingPage():
         title="Profile",
         icon=":material/account_circle:",
     )
-    customized_story_gen_page = st.Page(
-        "frontend/custom.py",
-        title="Custom",
-        icon="👑",
-    )
 
     # NAVIGATION SETUP [WITHOUT SECTIONS]
-    pg = st.navigation(pages=[home_page, profile_page, about_page, contact_page,customized_story_gen_page])
-
-    # NAVIGATION SETUP [WITH SECTIONS]
-    # pg = st.navigation(
-    #     {
-    #         "Info": [about_page],
-    #         "Projects": [project_1_page, project_2_page],
-    #     }
-    # )
+    pg = st.navigation(pages=[home_page, profile_page, about_page, contact_page])
 
     st.sidebar.markdown("Create Stories. Inspire Imagination!")
 

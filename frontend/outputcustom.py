@@ -11,19 +11,24 @@ import tempfile
 placeholder_image_path = "frontend/assets/loading-placeholder.png"
 placeholder_image = Image.open(placeholder_image_path)
 
+
 # Function to display the output page
-def show_output_page():
+def show_output_page_custom():
+    """Displays the generated story, images, and multimedia options."""
+
+    # Check if quiz is the current page
     if st.session_state.get("current_page") == "quiz":
         show_quiz_page(st.session_state.story_output['quiz'])
-        return  # Exit the function early
+        return  # Exit function early
 
+    # Ensure valid session data
     if st.session_state.story_output and st.session_state.generated_images:
         st.title(f"{st.session_state.user_topic.upper()}")
 
         # Display the story and generated images
         for i, story_part in enumerate(st.session_state.story_output['story_list']):
-            story_part = translate_story(story_part, target_language=st.session_state.selected_language)
-            st.write(f"{story_part}")
+            translated_part = translate_story(story_part, target_language=st.session_state.selected_language)
+            st.write(f"{translated_part}")
 
             if st.session_state.generated_images[i] is not None:
                 st.image(st.session_state.generated_images[i], caption=f"Generated Image {i + 1}", width=300)
@@ -32,16 +37,16 @@ def show_output_page():
 
         st.write("  \n  \n")
 
-        # Audio generation and playback
-        audio_data = st.session_state.get('audio_stream', None)
-        if audio_data:
+        # **Audio Generation and Playback**
+        if "audio_stream" in st.session_state:
             st.success("Audio already generated. Listen below:")
-            st.audio(audio_data, format="audio/mp3")
+            st.audio(st.session_state.audio_stream, format="audio/mp3")
         else:
-            if st.button("Listen to the story"):
+            if st.button("🎙 Listen to the Story"):
                 st.success("Generating audio...")
                 full_story_text = st.session_state.story_output['story']
-                audio_stream = generate_audio(translate_story(full_story_text, target_language=st.session_state.selected_language))
+                audio_stream = generate_audio(
+                    translate_story(full_story_text, target_language=st.session_state.selected_language))
 
                 if audio_stream:
                     st.session_state.audio_stream = audio_stream.read()
@@ -51,7 +56,7 @@ def show_output_page():
 
         st.write("  \n  \n")
 
-        # Generate PDF and allow download
+        # **Generate PDF and Allow Download**
         translated_story_list = [translate_story(part, target_language=st.session_state.selected_language)
                                  for part in st.session_state.story_output['story_list']]
         pdf_buffer = get_pdf(st.session_state.user_topic.upper(), translated_story_list,
@@ -66,7 +71,7 @@ def show_output_page():
 
         st.write("  \n  \n")
 
-        # 🎬 **Generate and Display Video**
+        # **Generate and Display Video**
         if "video_path" in st.session_state:
             st.success("Here is your video:")
             st.video(st.session_state.video_path)
@@ -79,28 +84,26 @@ def show_output_page():
                 with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_video_file:
                     output_video_path = temp_video_file.name
 
-                # Generate video
-                video_path = generate_video_from_story(full_story_text, output_video_path)
+                generate_video_from_story(full_story_text, output_video_path)
+                st.session_state.video_path = output_video_path
 
-                # Check if video was generated successfully
-                if video_path is None:
-                    st.error("❌ Unable to generate video as audio is unavailable.")
-                else:
-                    st.session_state.video_path = video_path
-                    st.success("✅ Video generated successfully!")
-                    st.video(st.session_state.video_path)
+                st.success("Video generated successfully! ")
+                st.video(st.session_state.video_path)
 
         st.write("  \n  \n")
 
-        # **New Quiz Button**
+        # **Quiz Section**
         if st.button("Quiz"):
             st.session_state.current_page = "quiz"
             st.rerun()
 
-        # **Back to Home Button**
-        if st.button("Back to Home"):
-            st.session_state.pop('audio_stream', None)
-            st.session_state.pop('pdf_downloaded', None)
-            st.session_state.pop('video_path', None)
-            st.session_state.page = "home"
+        st.write("  \n  \n")
+
+        # **Back to Custom Page Button**
+        if st.button("Back to Custom Page"):
+            # Clear unnecessary session states before navigating back
+            for key in ["audio_stream", "pdf_downloaded", "video_path"]:
+                st.session_state.pop(key, None)
+
+            st.session_state.page = "custom"
             st.rerun()
