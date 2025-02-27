@@ -6,6 +6,7 @@ from generators.model import generate_content
 from generators.generate_image import generate_image  # Import the function from the earlier step
 from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
+from frontend.custom import show_custom_page
 from generators.translator import translate_story, INDIAN_LANGUAGES  # Import the translator and language mapping
 
 colors = ['red', 'green', 'blue', 'yellow', 'orange','white']
@@ -147,6 +148,13 @@ if st.session_state.page == "home":
         else:
             st.warning("Please enter a topic.")
 
+    st.write("Or")
+    if st.button("Custom Generation"):  # CHANGES MADE
+        st.session_state.page = "custom"  # CHANGES MADE
+        st.rerun()  # CHANGES MADE
+
 # If page is set to 'output', call the show_output_page function
 if st.session_state.page == "output":
     show_output_page()
+elif st.session_state.page == "custom":  # CHANGES MADE
+    show_custom_page()  # CHANGES MADE

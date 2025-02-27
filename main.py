@@ -63,7 +63,7 @@ if 'user' not in st.session_state:
     # Added "Admin Login" button at the bottom
     st.header("Admin Login")
     if st.button("Admin Login"):
-        st.session_state['user'] = "admin"
+        st.session_state['user'] = {"email": "admin@storygpt.com"}
         st.success("Logged in as Admin!")
         time.sleep(1)
         st.rerun()
