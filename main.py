@@ -56,9 +56,17 @@ if 'user' not in st.session_state:
             st.rerun()
 
     # Sign up form
-    st.header("Or Sign Up")
+    st.header("Sign Up")
     if st.button("Sign Up"):
         sign_up(email, password)
+
+    # Added "Admin Login" button at the bottom
+    st.header("Admin Login")
+    if st.button("Admin Login"):
+        st.session_state['user'] = "admin"
+        st.success("Logged in as Admin!")
+        time.sleep(1)
+        st.rerun()
 
 else:
     # Logged-in user section
