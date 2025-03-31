@@ -1,6 +1,6 @@
 from deep_translator import GoogleTranslator
 
-def translate_story(text, target_language):
+def translate_text(text, target_language):
     try:
         translated = GoogleTranslator(source='auto', target=target_language).translate(text)
         return translated
@@ -8,17 +8,17 @@ def translate_story(text, target_language):
         return f"An error occurred during translation: {e}"
 
 INDIAN_LANGUAGES = {
-    'bn': 'bengali',
-    'gu': 'gujarati',
+    # 'bn': 'bengali',
+    # 'gu': 'gujarati',
     'hi': 'hindi',
-    'kn': 'kannada',
-    'ml': 'malayalam',
-    'mr': 'marathi',
-    'ne': 'nepali',
-    'or': 'odia',
-    'pa': 'punjabi',
-    'sd': 'sindhi',
-    'ta': 'tamil',
-    'te': 'telugu',
-    'ur': 'urdu'
+    # 'kn': 'kannada',
+    # 'ml': 'malayalam',
+    # 'mr': 'marathi',
+    # 'ne': 'nepali',
+    # 'or': 'odia',
+    # 'pa': 'punjabi',
+    # 'sd': 'sindhi',
+    # 'ta': 'tamil',
+    # 'te': 'telugu',
+    # 'ur': 'urdu'
 }

@@ -1,5 +1,5 @@
 import streamlit as st
-from generators.translator import translate_story
+from generators.translator import translate_text
 from PIL import Image
 from generators.generate_pdf import get_pdf
 from generators.audio_generator import generate_audio
@@ -23,11 +23,13 @@ def show_output_page():
         return  # Exit the function early
 
     if st.session_state.story_output and st.session_state.generated_images:
-        st.title(f"{st.session_state.user_topic.upper()}")
+        translated_title = translate_text(st.session_state.user_topic.upper(),
+                                          target_language=st.session_state.selected_language)
+        st.title(translated_title)
 
         # Display the story and generated images
         for i, story_part in enumerate(st.session_state.story_output['story_list']):
-            story_part = translate_story(story_part, target_language=st.session_state.selected_language)
+            story_part = translate_text(story_part, target_language=st.session_state.selected_language)
             st.write(f"{story_part}")
 
             if st.session_state.generated_images[i] is not None:
@@ -36,7 +38,10 @@ def show_output_page():
                 st.image(placeholder_image, caption=f"Image {i + 1} could not be generated.", width=300)
 
         st.write("  \n  \n")
-
+        if st.session_state.selected_language == 'hi':
+            is_hindi = True
+        else:
+            is_hindi = False
         # Audio generation and playback
         audio_data = st.session_state.get('audio_stream', None)
         if audio_data:
@@ -46,7 +51,9 @@ def show_output_page():
             if st.button("Listen to the story"):
                 st.success("Generating audio...")
                 full_story_text = st.session_state.story_output['story']
-                audio_stream = generate_audio(translate_story(full_story_text, target_language=st.session_state.selected_language))
+                text = translate_text(full_story_text, target_language=st.session_state.selected_language)
+
+                audio_stream = generate_audio(text=text, is_hindi=is_hindi)
 
                 if audio_stream:
                     st.session_state.audio_stream = audio_stream.read()
@@ -57,9 +64,11 @@ def show_output_page():
         st.write("  \n  \n")
 
         # Generate PDF and allow download
-        translated_story_list = [translate_story(part, target_language=st.session_state.selected_language)
+        translated_story_title = translate_text(st.session_state.user_topic.upper(),target_language=st.session_state.selected_language)
+        translated_story=translate_text(st.session_state.story_output['story'], target_language=st.session_state.selected_language)
+        translated_story_list = [translate_text(part, target_language=st.session_state.selected_language)
                                  for part in st.session_state.story_output['story_list']]
-        pdf_buffer = get_pdf(st.session_state.user_topic.upper(), translated_story_list,
+        pdf_buffer = get_pdf(translated_story_title, translated_story_list,
                              st.session_state.generated_images)
 
         st.download_button(
@@ -78,14 +87,13 @@ def show_output_page():
         else:
             if st.button("Generate Video"):
                 st.success("Generating video, please wait...")
-                full_story_text = st.session_state.story_output['story']
 
                 # Save video temporarily
                 with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_video_file:
                     output_video_path = temp_video_file.name
 
                 # Generate video
-                video_path = generate_video_from_story(full_story_text, output_video_path)
+                video_path = generate_video_from_story(translated_story_list, output_video_path,is_hindi=is_hindi)
 
                 # Check if video was generated successfully
                 if video_path is None:

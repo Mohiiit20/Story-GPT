@@ -1,4 +1,4 @@
-from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip, CompositeVideoClip
+from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import os
@@ -19,16 +19,24 @@ def get_story_parts(story):
     parts = [' '.join(part) for part in parts]
     return parts
 
-def add_subtitle_to_image(image_path, subtitle, output_path):
-    """Adds subtitles to an image with proper word wrapping."""
+
+def add_subtitle_to_image(image_path, subtitle, output_path, is_hindi=False):
+    """Adds subtitles to an image with proper word wrapping, supporting Hindi text."""
     img = Image.open(image_path).convert("RGBA")
     draw = ImageDraw.Draw(img)
 
-    # Load font
-    try:
-        font = ImageFont.truetype("arial.ttf", 40)  # Adjust size as needed
-    except IOError:
-        font = ImageFont.load_default()
+    # Load appropriate font
+    if is_hindi:
+        font_path = "frontend/assets/NotoSansDevanagari-Regular.ttf"  # Ensure the correct path
+        try:
+            font = ImageFont.truetype(font_path, 40)  # Adjust size if needed
+        except IOError:
+            font = ImageFont.load_default()
+    else:
+        try:
+            font = ImageFont.truetype("arial.ttf", 40)
+        except IOError:
+            font = ImageFont.load_default()
 
     # Get image size
     image_width, image_height = img.size
@@ -58,8 +66,8 @@ def add_subtitle_to_image(image_path, subtitle, output_path):
     # Save new image with subtitles
     img.save(output_path)
 
-def generate_video_from_story(full_story_text, final_video_path):
-    story_segments = get_story_parts(full_story_text)
+
+def generate_video_from_story(story_segments, final_video_path, is_hindi):
     video_clips = []
 
     output_dir = "generated_images"
@@ -75,10 +83,10 @@ def generate_video_from_story(full_story_text, final_video_path):
             return
 
         # Add subtitle to image
-        add_subtitle_to_image(image_filename, segment, subtitle_image_filename)
+        add_subtitle_to_image(image_filename, segment, subtitle_image_filename,is_hindi)
 
         # Generate audio
-        audio_stream = generate_audio(segment)
+        audio_stream = generate_audio(segment, is_hindi)
         if audio_stream is None:
             print(f"❌ Video cannot be generated as audio is unavailable for segment {idx + 1}.")
             return None  # Stop execution immediately
@@ -100,6 +108,7 @@ def generate_video_from_story(full_story_text, final_video_path):
     print(f"Video successfully saved at: {final_video_path}")
     return final_video_path
 
+
 # Function to clear old images from the output directory
 def clear_old_images(output_dir):
     if os.path.exists(output_dir):
@@ -111,12 +120,3 @@ def clear_old_images(output_dir):
     else:
         os.makedirs(output_dir)
         print(f"Created output directory: {output_dir}")
-
-# Example usage for dynamic input
-if __name__ == "__main__":
-    full_story_text = input("Enter your full story: ")
-    if full_story_text:
-        output_video_path = "video_assets/final_story_video.mp4"
-        generate_video_from_story(full_story_text, final_video_path=output_video_path)
-    else:
-        print("No story was provided. Exiting.")

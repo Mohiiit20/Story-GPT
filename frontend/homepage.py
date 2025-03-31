@@ -7,7 +7,7 @@ from generators.generate_image import generate_image  # Import the function from
 from concurrent.futures import ThreadPoolExecutor
 from frontend.outputpage import show_output_page  # Import the function from outputpage.py
 from frontend.custom import show_custom_page
-from generators.translator import translate_story, INDIAN_LANGUAGES  # Import the translator and language mapping
+from generators.translator import INDIAN_LANGUAGES  # Import the translator and language mapping
 
 colors = ['red', 'green', 'blue', 'yellow', 'orange','white']
 attire_mapping = {
@@ -111,16 +111,13 @@ if st.session_state.page == "home":
                     st.session_state.generated_images = []  # Clear previous images
 
                     # Prepare the full image prompts
-                    if target_language == 'en':
-                        context_description = (
-                            "the kid with brown hair, wearing a colorful shirt and black pants. "
-                            "Image generated must be realistic."
-                        )
-                    else:
-                        cultural_attire = attire_mapping.get(target_language, 'default cultural attire')
-                        context_description = (
-                            f"girl dressed in {cultural_attire} wearing a {random.choice(colors)} color . Image generated must be realistic."
-                        )
+
+                    context_description = (
+                        f"the kid with black hair, wearing a {random.choice(['red', 'green', 'blue', 'yellow'])} shirt and black pants. "
+                        "Image generated must be animated."
+                        f"This image is generated for a story based on topic {st.session_state.user_topic}"
+                    )
+
                     # Generate image prompts
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."

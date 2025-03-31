@@ -92,9 +92,8 @@ def show_custom_page():
 
                     # Generate image prompts
                     context_description = (
-                        "a kid with brown hair, wearing a colorful shirt and black pants. Image should be realistic."
-                        if st.session_state.selected_language == 'en'
-                        else f"girl dressed in traditional attire, wearing {random.choice(['red', 'green', 'blue', 'yellow'])}. Image should be realistic."
+                        "Image generated must be realistic."
+                        f"This image is generated for a story based on topic {st.session_state.user_topic}"
                     )
                     image_prompts = [
                         f"{result['image_prompts'][i]}. Depict {context_description}."

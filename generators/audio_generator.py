@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 import os
 
 import os
-xi_api_key=os.getenv('XI_API_KEY')
+# xi_api_key=os.getenv('XI_API_KEY')
+xi_api_key="sk_af4083eca9f75b9b076282cefd23466924a174af4470f884"
 
 
 # Aria; 9BWtsMINqrJLrRacOk9x
@@ -29,11 +30,16 @@ xi_api_key=os.getenv('XI_API_KEY')
 # Bill; pqHfZKP75CvOlQylNhV4
 
 
+HINDI_VOICE_ID='MF4J4IDTRo0AxOO4dpFR'
+
 VOICE_ID = "EXAVITQu4vr4xnSDxMaL"
 
 # Function to generate audio from text using ElevenLabs API
-def generate_audio(text):
-    tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream"
+def generate_audio(text,is_hindi):
+    if is_hindi:
+        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{HINDI_VOICE_ID}/stream"
+    else:
+        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream"
 
     headers = {
         "Accept": "application/json",
