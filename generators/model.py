@@ -1,3 +1,5 @@
+import random
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 import google.generativeai as genai
 import streamlit as st
@@ -23,7 +25,13 @@ def generate_story(topic):
         history=[]
     )
 
-    story = story_session.send_message(f"Generate a social story on topic {topic}").text
+    boys = ['Ram', 'Rahul', 'Om', 'Rohan']
+    girls = ['Riya', 'Meera', 'Nisha', 'Pooja']
+
+    story = story_session.send_message(f"Generate a social story on topic {topic}."
+                                       f"For boys name use names like {random.choice(boys)}"
+                                       f"For girls name use names like {random.choice(girls)}"
+                                       f"Make sure story consists at leas 3 lines").text
 
     return {
         'story': story,
@@ -122,7 +130,6 @@ def get_story_parts(story):
     print(parts)
     print(len(parts))
     return parts
-
 
 def extract_and_format_quiz(model_output):
     # Remove extra newlines and spaces
